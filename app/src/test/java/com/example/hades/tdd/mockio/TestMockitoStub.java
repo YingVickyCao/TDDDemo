@@ -11,12 +11,14 @@ import java.util.ArrayList;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.after;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.atMost;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -51,6 +53,7 @@ public class TestMockitoStub {
             when(person.getName()).thenReturn("A");
             Assert.assertEquals("A", person.getName()); // A
             when(person.getName()).thenReturn("B");
+            Assert.assertEquals("B", person.getName()); // A
         }
         {
             Person person = mock(Person.class);
@@ -276,12 +279,14 @@ public class TestMockitoStub {
             Person person = mock(Person.class);
             Assert.assertNotNull(person);
             Assert.assertNull(person.getName2());
+            System.out.println(person.getName2());  // null
         }
         {
             Person person = mock(Person.class);
             doCallRealMethod().when(person).getName2();
             Assert.assertNotNull(person);
             Assert.assertEquals("Name", person.getName2());
+            System.out.println(person.getName2());  // Name
         }
     }
 
@@ -289,11 +294,42 @@ public class TestMockitoStub {
     public void test2_doCallRealMethod() throws Exception {
         Person person = mock(Person.class);
         person.setName("A");
-        System.out.println(person.getName());
+        System.out.println(person.getName());   // null
 
         doCallRealMethod().when(person).setName("A");
         person.setName("A");
-        System.out.println(person.getName());
+        System.out.println(person.getName());   // null
+    }
+
+    @Test
+    public void test_doCallRealMethod_Void() {
+        {
+            Person person = mock(Person.class);
+            person.setName("A");
+            System.out.println(person.getName());   // null
+        }
+        {
+            // mock not work.
+            Person person = mock(Person.class);
+            System.out.println(person.getName()); // null
+
+            doCallRealMethod().when(person).setName("A");
+            person.setName("A");
+
+            System.out.println(person.getName()); // null
+            Assert.assertNull(person.getName());
+        }
+        {
+            // spy work
+            Person person = spy(Person.class);
+            System.out.println(person.getName()); // null
+
+            doCallRealMethod().when(person).setName("A");
+            person.setName("A");
+
+            System.out.println(person.getName()); // A
+            Assert.assertEquals("A", person.getName());
+        }
     }
 
     @Test

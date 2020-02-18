@@ -11,17 +11,17 @@ public class TestSpy {
     @Test
     public void notSpy() throws Exception {
         Person person = mock(Person.class);
-        System.out.println(person.getName());
+        System.out.println(person.getName()); // null
         person.setName("A");// MockMethodInterceptor
-        System.out.println(person.getName());
+        System.out.println(person.getName());  // null
     }
 
     // You can create spies of real objects. When you use the spy then the real methods are called (unless a method was stubbed).
     @Test
     public void hasSpy() throws Exception {
         Person person = spy(Person.class);
-        System.out.println(person.getName());
+        System.out.println(person.getName());   // null
         person.setName("A");// MockMethodInterceptor
-        System.out.println(person.getName());
+        System.out.println(person.getName());   // A
     }
 }
